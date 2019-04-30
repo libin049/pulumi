@@ -258,6 +258,12 @@ class CustomResource(Resource):
     deployments and may be missing (undefined) during planning phases.
     """
 
+    __pulumiType: str
+    """
+    Private field containing the type ID for this object. Useful for implementing `isInstance` on
+    classes that inherit from `CustomResource`.
+    """
+
 
     def __init__(self,
                  t: str,
@@ -272,6 +278,7 @@ class CustomResource(Resource):
                resource.
         """
         Resource.__init__(self, t, name, True, props, opts)
+        self.__pulumiType = t
 
 
 class ComponentResource(Resource):
