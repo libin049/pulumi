@@ -4,6 +4,10 @@
 
 - Fix an issue where creating a first class provider would fail if any of the
   configuration values for the providers were secrets. (fixes [pulumi/pulumi#2741](https://github.com/pulumi/pulumi/issues/2741)).
+- Add support for renaming resources via the `aliases` resource option.  Adding aliases allows new resources to match
+  resource from previous deployments which used different names, maintaining the identity of the resource and avoiding
+  replacements or re-creation of the resource.
+
 
 ## 0.17.12 (Released May 15, 2019)
 
