@@ -12,49 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Enumerator } from "./interfaces";
+import { isAsyncIterable, QuerySource } from "./interfaces";
+import { isIterable } from "./util";
 
-export class RangeEnumerator implements Enumerator<number> {
-    private curr: number;
-
-    constructor(private readonly start: number, private readonly stop?: number) {
-        this.curr = start - 1;
-    }
-
-    public current(): number {
-        return this.curr;
-    }
-
-    public moveNext(): boolean {
-        this.curr++;
-        if (this.stop === undefined || this.curr < this.stop) {
-            return true;
-        } else {
-            return false;
+export async function* range(start: number, end?: number) {
+    let i = start;
+    while (true) {
+        if (end !== undefined && i >= end) {
+            return;
         }
+        yield i++;
     }
 }
 
-export class ListEnumerator<T> implements Enumerator<T> {
-    private index: number = -1;
-    public static from<T>(ts: T[]): ListEnumerator<T> {
-        return new ListEnumerator<T>(ts);
+export async function* from<TSource>(source: QuerySource<TSource>): AsyncIterableIterator<TSource> {
+    let iter: Iterable<TSource> | AsyncIterable<TSource>;
+    if (isIterable(source) || isAsyncIterable(source)) {
+        iter = source;
+    } else {
+        iter = await source;
     }
 
-    private constructor(private readonly ts: T[]) {}
-
-    public current(): T {
-        if (this.index < 0) {
-            throw Error("`moveNext` must be called before `current`");
-        } else if (this.index >= this.ts.length) {
-            throw Error("`current` called after the last element in the sequence");
+    if (isIterable(iter)) {
+        for (const t of iter) {
+            yield t;
         }
-
-        return this.ts[this.index];
-    }
-
-    public moveNext(): boolean {
-        this.index++;
-        return this.index < this.ts.length;
+    } else {
+        for await (const t of iter) {
+            yield t;
+        }
     }
 }

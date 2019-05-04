@@ -527,7 +527,7 @@ function isAny(o: any): o is any {
 export function listResourceOutputs<U extends CustomResource = any>(
     stackName?: string,
     typeFilter: (o: any) => o is U = isAny,
-): query.EnumerablePromise<query.QueryableCustomResource<U>> {
+): query.IterablePromise<query.QueryableCustomResource<U>> {
     return query
         .from(
             invoke("pulumi:pulumi:readStackResourceOutputs", {

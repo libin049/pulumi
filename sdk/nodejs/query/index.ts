@@ -17,16 +17,41 @@
 // interfaces in case we decide to change the implementation drastically later.
 //
 
-import { EnumerablePromiseImpl } from "./enumerablePromise";
-import { EnumerablePromise } from "./interfaces";
+import { IterablePromiseImpl } from "./enumerablePromise";
+import { IterablePromise } from "./interfaces";
+import * as sources from "./sources";
 
-export { Enumerable, EnumerablePromise } from "./interfaces";
+export { IterablePromise } from "./interfaces";
 export { Queryable, QueryableCustomResource } from "./queryable";
 
-export function from<T>(source: T[] | Promise<T[]>): EnumerablePromise<T> {
-    return EnumerablePromiseImpl.from(source);
+export function from<TSource>(
+    source:
+        | Iterable<TSource>
+        | AsyncIterable<TSource>
+        | Promise<Iterable<TSource>>
+        | Promise<AsyncIterable<TSource>>,
+): IterablePromise<TSource> {
+    return IterablePromiseImpl.from(source);
 }
 
-export function range(start: number, stop?: number): EnumerablePromise<number> {
-    return EnumerablePromiseImpl.range(start, stop);
+export function range(start: number, stop?: number): IterablePromise<number> {
+    return IterablePromiseImpl.from(sources.range(start, stop));
+}
+
+export function empty<TResult>(): AsyncIterableIterator<TResult> {
+    return IterablePromiseImpl.from(sources.from([]));
+}
+
+export function singleton<TSource>(t: TSource): AsyncIterableIterator<TSource> {
+    return IterablePromiseImpl.from(sources.from([t]));
+}
+
+export function repeat<TSource>(t: TSource) {
+    IterablePromiseImpl.from(
+        (async function*() {
+            while (true) {
+                yield t;
+            }
+        })(),
+    );
 }
