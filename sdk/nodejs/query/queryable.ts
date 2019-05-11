@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { OutputInstance } from "../index";
-import { CustomResource } from "../resource";
+import { Resource } from "../resource";
 
 export type Queryable<T> = T extends Promise<infer U1>
     ? QueryableSimple<U1>
@@ -21,7 +21,7 @@ export type Queryable<T> = T extends Promise<infer U1>
     ? QueryableSimple<U2>
     : QueryableSimple<T>;
 
-export type QueryableCustomResource<T extends CustomResource> = Omit<
+export type QueryableResource<T extends Resource> = Omit<
     Queryable<T>,
     "urn" | "getProvider"
 >;

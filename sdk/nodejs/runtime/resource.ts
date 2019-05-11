@@ -524,17 +524,17 @@ function isAny(o: any): o is any {
  *
  * @example pulumi.runtime.listResourceOutput(aws.s3.Bucket.isInstance)
  */
-export function listResourceOutputs<U extends CustomResource = any>(
+export function listResourceOutputs<U extends Resource>(
     stackName?: string,
     typeFilter: (o: any) => o is U = isAny,
-): query.IterablePromise<query.QueryableCustomResource<U>> {
+): query.IterablePromise<query.QueryableResource<U>> {
     return query
         .from(
             invoke("pulumi:pulumi:readStackResourceOutputs", {
                 stackName: stackName || getStack(),
             }).then<any[]>(({ outputs }) => Object.values(outputs)),
         )
-        .map<query.QueryableCustomResource<U>>(({ type: typ, outputs }) => {
+        .map<query.QueryableResource<U>>(({ type: typ, outputs }) => {
             return { ...outputs, __pulumiType: typ };
         })
         .filter(typeFilter);

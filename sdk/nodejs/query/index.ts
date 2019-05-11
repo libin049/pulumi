@@ -22,7 +22,7 @@ import { IterablePromise } from "./interfaces";
 import * as sources from "./sources";
 
 export { IterablePromise } from "./interfaces";
-export { Queryable, QueryableCustomResource } from "./queryable";
+export { Queryable, QueryableResource } from "./queryable";
 
 export function from<TSource>(
     source:
